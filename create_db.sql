@@ -53,13 +53,13 @@ create table service_log_data (
     service_type    varchar(50),
     subtype         varchar(50),
     action_arc      integer,
-    photo_before    varchar(500),
-    photo_left      varchar(300),
-    photo_right     varchar(300),
-    photo_front     varchar(300),
-    video           varchar(300),
+    photo_before    varchar(100),
+    photo_left      varchar(100),
+    photo_right     varchar(100),
+    photo_front     varchar(100),
+    video           varchar(100),
     comment         varchar(500),
-    photo_extra     varchar(500)
+    photo_extra     varchar(100)
 );
 
 create table inspection_log (
@@ -73,11 +73,11 @@ create table inspection_log_data (
     inspection_log_id   integer         references inspection_log(id),
     cheackup            varchar(30),
     repair_type         varchar(30),
-    photo_before        varchar(500),
-    photo_left          varchar(300),
-    photo_right         varchar(300),
-    photo_front         varchar(300),
-    video               varchar(300),
+    photo_before        varchar(100),
+    photo_left          varchar(100),
+    photo_right         varchar(100),
+    photo_front         varchar(100),
+    video               varchar(100),
     comment             varchar(500)
 );
 
