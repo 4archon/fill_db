@@ -73,9 +73,10 @@ def fill_inspection():
 
 def test():
     type_s = "inspection"
-    cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video from inspection_log_data")
+    cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video from inspection_log_data where id < 1000")
     for log in cursor.fetchall():
         id = str(log[0])
+        print(id)
         photo_before = get_content(log[1], type_s, id, "photo_before", folder)
         photo_left = get_content(log[2], type_s, id, "photo_left", folder)
         photo_right = get_content(log[3], type_s, id, "photo_right", folder)
