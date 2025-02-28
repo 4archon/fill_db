@@ -3,15 +3,15 @@
 import yadisk
 import psycopg2
 import os
-import time
+import datetime
 
 client = yadisk.Client(token="y0__xCe_rrQBxjUxTUgqrq3sBJl4wRAPK0drsWI7LTvi-OHV0FP9A")
 print(client.check_token())
 
-conn = psycopg2.connect(dbname="maps", host="localhost", user="kn17", password="a1", port="5432")
+conn = psycopg2.connect(dbname="maps", host="localhost", user="zxc", password="a1", port="5432")
 cursor = conn.cursor()
 
-conn2 = psycopg2.connect(dbname="maps", host="localhost", user="kn17", password="a1", port="5432")
+conn2 = psycopg2.connect(dbname="maps", host="localhost", user="zxc", password="a1", port="5432")
 cursor2 = conn2.cursor()
 conn2.autocommit = True
 
@@ -87,9 +87,10 @@ def test():
         cursor2.execute("update inspection_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
         (photo_before, photo_left, photo_right, photo_front, video, id))
 
-start = time.time()
+start = datetime.datetime.now()
 test()
-end = time.time()
+end = datetime.datetime.now()
+print(end - start)
 
 cursor.close()
 conn.close()
