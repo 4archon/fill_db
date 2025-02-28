@@ -19,19 +19,18 @@ def get_content(url, type_s, id, name, folder):
     with client:
         try:
             anti = client.get_public_meta(url)["antivirus_status"]
-            if anti == "clear":
+            if anti == "clean":
                 if client.get_public_meta(url)["type"] == 'file':
-                    try:
+                    folder_path = folder + type_s + "/" + id
+                    if not os.path.exists(folder_path):
                         os.mkdir(folder + type_s + "/" + id)
-                    except:
-                        pass
                     if client.get_public_meta(url)["media_type"] == "image":
-                        path = folder + type_s + "/" + id + "/" + name + ".img"
-                        client.download_by_link(path)
+                        path = folder_path + "/" + name + ".jpeg"
+                        client.download_by_link(url, path)
                         return path
                     elif client.get_public_meta(url)["media_type"] == "video":
-                        path = folder + type_s + "/" + id + "/" + name + ".mov"
-                        client.download_by_link(path)
+                        path = folder_path + "/" + name + ".mov"
+                        client.download_by_link(url, path)
                         return path
                     else:
                         return ""
