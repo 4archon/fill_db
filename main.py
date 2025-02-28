@@ -3,6 +3,7 @@
 import yadisk
 import psycopg2
 import os
+import time
 
 client = yadisk.Client(token="y0__xCe_rrQBxjUxTUgqrq3sBJl4wRAPK0drsWI7LTvi-OHV0FP9A")
 print(client.check_token())
@@ -26,12 +27,12 @@ def get_content(url, type_s, id, name, folder):
                         os.mkdir(folder + type_s + "/" + id)
                     if client.get_public_meta(url)["media_type"] == "image":
                         path = folder_path + "/" + name + ".jpeg"
-                        down_link = client.get_download_link(url)
+                        down_link = client.get_public_download_link(url)
                         client.download_by_link(down_link, path)
                         return path
                     elif client.get_public_meta(url)["media_type"] == "video":
                         path = folder_path + "/" + name + ".mov"
-                        down_link = client.get_download_link(url)
+                        down_link = client.get_public_download_link(url)
                         client.download_by_link(down_link, path)
                         return path
                     else:
@@ -86,7 +87,9 @@ def test():
         cursor2.execute("update inspection_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
         (photo_before, photo_left, photo_right, photo_front, video, id))
 
+start = time.time()
 test()
+end = time.time()
 
 cursor.close()
 conn.close()
