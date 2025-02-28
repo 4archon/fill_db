@@ -26,11 +26,13 @@ def get_content(url, type_s, id, name, folder):
                         os.mkdir(folder + type_s + "/" + id)
                     if client.get_public_meta(url)["media_type"] == "image":
                         path = folder_path + "/" + name + ".jpeg"
-                        client.download_by_link(url, path)
+                        down_link = client.get_download_link(url)
+                        client.download_by_link(down_link, path)
                         return path
                     elif client.get_public_meta(url)["media_type"] == "video":
                         path = folder_path + "/" + name + ".mov"
-                        client.download_by_link(url, path)
+                        down_link = client.get_download_link(url)
+                        client.download_by_link(down_link, path)
                         return path
                     else:
                         return ""
@@ -40,8 +42,6 @@ def get_content(url, type_s, id, name, folder):
                 return ""
         except:
              return ""
-
-folder = "server/static/media/"
 
 def fill_service():
     type_s = "service"
@@ -55,7 +55,7 @@ def fill_service():
         photo_extra = get_content(log[6], type_s, id, "photo_extra", folder)
         video = get_content(log[5], type_s, id, "video", folder)
         cursor2.execute("update service_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, photo_extra = %s, video = %s where id = %s",
-        photo_before, photo_left, photo_right, photo_front, photo_extra, video, id)
+        (photo_before, photo_left, photo_right, photo_front, photo_extra, video, id))
         
 def fill_inspection():
     type_s = "inspection"
@@ -68,11 +68,13 @@ def fill_inspection():
         photo_front = get_content(log[4], type_s, id, "photo_front", folder)
         video = get_content(log[5], type_s, id, "video", folder)
         cursor2.execute("update inspection_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
-        photo_before, photo_left, photo_right, photo_front, video, id)        
+        (photo_before, photo_left, photo_right, photo_front, video, id))        
+
+folder = "test/media/"
 
 def test():
     type_s = "inspection"
-    cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video from inspection_log_data where id < 1000")
+    cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video from inspection_log_data where id > 677 and id < 700")
     for log in cursor.fetchall():
         id = str(log[0])
         print(id)
@@ -82,7 +84,7 @@ def test():
         photo_front = get_content(log[4], type_s, id, "photo_front", folder)
         video = get_content(log[5], type_s, id, "video", folder)
         cursor2.execute("update inspection_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
-        photo_before, photo_left, photo_right, photo_front, video, id)
+        (photo_before, photo_left, photo_right, photo_front, video, id))
 
 test()
 
