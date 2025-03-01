@@ -4,6 +4,7 @@ import yadisk
 import psycopg2
 import os
 import datetime
+import sys
 
 client = yadisk.Client(token="y0__xCe_rrQBxjUxTUgqrq3sBJl4wRAPK0drsWI7LTvi-OHV0FP9A")
 print(client.check_token())
@@ -60,6 +61,7 @@ def fill_service():
         video = get_content(log[5], type_s, id, "video", folder)
         cursor2.execute("update service_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, photo_extra = %s, video = %s where id = %s",
         (photo_before, photo_left, photo_right, photo_front, photo_extra, video, id))
+        print(id)
         
 def fill_inspection():
     type_s = "inspection"
@@ -72,7 +74,8 @@ def fill_inspection():
         photo_front = get_content(log[4], type_s, id, "photo_front", folder)
         video = get_content(log[5], type_s, id, "video", folder)
         cursor2.execute("update inspection_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
-        (photo_before, photo_left, photo_right, photo_front, video, id))        
+        (photo_before, photo_left, photo_right, photo_front, video, id))
+        print(id)        
 
 folder = "test/media/"
 
@@ -93,13 +96,16 @@ def test():
 start = datetime.datetime.now()
 print(start)
 
-
-test()
-
+try:
+    test()
+except BaseException as error:
+    sys.stdout.flush()
+    raise error
 
 end = datetime.datetime.now()
 print(end)
 print(end - start)
+sys.stdout.flush()
 
 cursor.close()
 conn.close()
