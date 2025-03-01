@@ -28,16 +28,17 @@ def get_content(url, type_s, id, name, folder):
              return ""
         
         folder_path = folder + type_s + "/" + id
+        ref = "media/" + type_s + "/" + id
         if anti == "clean":
             if type_file == 'file':
                 if not os.path.exists(folder_path):
                     os.mkdir(folder_path)
                 if media == "image":
-                    path = folder_path + "/" + name + ".jpeg"
+                    path = ref + "/" + name + ".jpeg"
                     client.download_by_link(down_link, path)
                     return path
                 elif media == "video":
-                    path = folder_path + "/" + name + ".mov"
+                    path = ref + "/" + name + ".mov"
                     client.download_by_link(down_link, path)
                     return path
                 else:
@@ -95,8 +96,9 @@ def test():
 start = datetime.datetime.now()
 print(start)
 
-
 test()
+# fill_service()
+# fill_inspection()
 
 
 end = datetime.datetime.now()
