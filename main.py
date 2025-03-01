@@ -34,13 +34,15 @@ def get_content(url, type_s, id, name, folder):
                 if not os.path.exists(folder_path):
                     os.mkdir(folder_path)
                 if media == "image":
-                    path = ref + "/" + name + ".jpeg"
+                    path = folder + "/" + name + ".jpeg"
                     client.download_by_link(down_link, path)
-                    return path
+                    href = ref + "/" + name + ".jpeg"
+                    return href
                 elif media == "video":
-                    path = ref + "/" + name + ".mov"
+                    path = folder + "/" + name + ".mov"
                     client.download_by_link(down_link, path)
-                    return path
+                    href = ref + "/" + name + ".mov"
+                    return href
                 else:
                     return ""
             else:
