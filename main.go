@@ -28,14 +28,14 @@ func readCSV(fileName string) [][]string {
 	// return records
 }
 
-func codeActive(str string) string {
+func codeActive(str string) bool {
 	switch str {
 	case "Деактивирована":
-		return "d"
+		return false
 	case "Демонтирована":
-		return "m"
+		return false
 	default:
-		return "a"
+		return true
 	}
 }
 
@@ -48,7 +48,7 @@ func fillPoints(db *sql.DB, points [][]string) {
 	for _, i := range points {
 		pointID := i[0]
 		active := codeActive(i[1])
-		_, err = connection.Exec("insert into points(id, active) values($1, $2)", pointID, active)
+		_, err = connection.Exec("insert into points(id) values($1)", pointID)
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
@@ -85,8 +85,19 @@ func fillPoints(db *sql.DB, points [][]string) {
 			return
 		}
 
-		_, err = connection.Exec(`update report set change_point_id = $1, submission_date = $2, 
-		sent_worker = $3, verified = $4 where id = $5`, logID, nil, true, false, reportID)
+		logActiveRow := connection.QueryRow(`insert into point_active_log(point_id, point_status)
+		values($1, $2) returning id;`, pointID, active)
+		var logActiveID int
+		err = logActiveRow.Scan(&logActiveID)
+		if err != nil {
+			connection.Rollback()
+			log.Println(err)
+			return
+		}
+
+		_, err = connection.Exec(`update report set change_point_id = $1, point_active_id = $2,
+		submission_date = $3, sent_worker = $4, verified = $5 where id = $6`, logID, logActiveID,
+		nil, true, false, reportID)
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
