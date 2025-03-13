@@ -67,16 +67,15 @@ def fill_service():
         
 def fill_inspection():
     type_s = "inspection"
-    cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video from inspection_log_data")
+    cursor.execute("select id, photo_left, photo_right, photo_front, video from inspection_log_data")
     for log in cursor.fetchall():
         id = str(log[0])
-        photo_before = get_content(log[1], type_s, id, "photo_before", folder)
-        photo_left = get_content(log[2], type_s, id, "photo_left", folder)
-        photo_right = get_content(log[3], type_s, id, "photo_right", folder)
-        photo_front = get_content(log[4], type_s, id, "photo_front", folder)
-        video = get_content(log[5], type_s, id, "video", folder)
-        cursor2.execute("update inspection_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
-        (photo_before, photo_left, photo_right, photo_front, video, id))
+        photo_left = get_content(log[1], type_s, id, "photo_left", folder)
+        photo_right = get_content(log[2], type_s, id, "photo_right", folder)
+        photo_front = get_content(log[3], type_s, id, "photo_front", folder)
+        video = get_content(log[4], type_s, id, "video", folder)
+        cursor2.execute("update inspection_log_data set photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
+        (photo_left, photo_right, photo_front, video, id))
         print(id + type_s, flush=True)        
 
 folder = "test/media/"
@@ -86,14 +85,13 @@ def test():
     cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video from inspection_log_data where id > 677 and id < 700")
     for log in cursor.fetchall():
         id = str(log[0])
-        photo_before = get_content(log[1], type_s, id, "photo_before", folder)
-        photo_left = get_content(log[2], type_s, id, "photo_left", folder)
-        photo_right = get_content(log[3], type_s, id, "photo_right", folder)
-        photo_front = get_content(log[4], type_s, id, "photo_front", folder)
-        video = get_content(log[5], type_s, id, "video", folder)
-        cursor2.execute("update inspection_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
-        (photo_before, photo_left, photo_right, photo_front, video, id))
-        print(id + type_s, flush=True)
+        photo_left = get_content(log[1], type_s, id, "photo_left", folder)
+        photo_right = get_content(log[2], type_s, id, "photo_right", folder)
+        photo_front = get_content(log[3], type_s, id, "photo_front", folder)
+        video = get_content(log[4], type_s, id, "video", folder)
+        cursor2.execute("update inspection_log_data set photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
+        (photo_left, photo_right, photo_front, video, id))
+        print(id + type_s, flush=True)  
 
 start = datetime.datetime.now()
 print(start)
