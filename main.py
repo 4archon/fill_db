@@ -82,7 +82,7 @@ folder = "test/media/"
 
 def test():
     type_s = "inspection"
-    cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video from inspection_log_data where id > 677 and id < 700")
+    cursor.execute("select id, photo_left, photo_right, photo_front, video from inspection_log_data where id > 677 and id < 700")
     for log in cursor.fetchall():
         id = str(log[0])
         photo_left = get_content(log[1], type_s, id, "photo_left", folder)
@@ -96,9 +96,9 @@ def test():
 start = datetime.datetime.now()
 print(start)
 
-test()
-# fill_service()
-# fill_inspection()
+# test()
+fill_service()
+fill_inspection()
 
 
 end = datetime.datetime.now()
