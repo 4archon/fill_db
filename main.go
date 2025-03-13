@@ -70,12 +70,12 @@ func fillPoints(db *sql.DB, points [][]string) {
 		var logRow *sql.Row
 		if i[3] == "" {
 			logRow = connection.QueryRow(`insert into change_points_log values(
-				default, $1, $2, $3, $4, $5, $6, $7, $8, $9) returning id`,
-				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], nil)	
+				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id`,
+				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], nil, nil, true)	
 		} else {
 			logRow = connection.QueryRow(`insert into change_points_log values(
-				default, $1, $2, $3, $4, $5, $6, $7, $8, $9) returning id`,
-				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], i[3])
+				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id`,
+				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], i[3], nil, true)
 		}
 		var logID int
 		err = logRow.Scan(&logID)
@@ -85,8 +85,8 @@ func fillPoints(db *sql.DB, points [][]string) {
 			return
 		}
 
-		logActiveRow := connection.QueryRow(`insert into point_active_log(point_id, point_status)
-		values($1, $2) returning id;`, pointID, active)
+		logActiveRow := connection.QueryRow(`insert into point_active_log(point_id, point_status, active)
+		values($1, $2, $3) returning id;`, pointID, active, true)
 		var logActiveID int
 		err = logActiveRow.Scan(&logActiveID)
 		if err != nil {
@@ -171,7 +171,7 @@ func fillService(db *sql.DB, service [][]string) {
 		}
 
 		serviceLogRow := connection.QueryRow(`insert into service_log values(default,
-		$1, $2) returning id`, pointID, i[2])
+		$1, $2, $3) returning id`, pointID, i[2], true)
 		var serviceLogID int
 		err = serviceLogRow.Scan(&serviceLogID)
 		if err != nil {
@@ -248,7 +248,7 @@ func fillInspection(db *sql.DB, inspections [][]string) {
 		}
 
 		inspectionLogRow := connection.QueryRow(`insert into inspection_log values(default,
-		$1, $2) returning id`, pointID, i[2])
+		$1, $2, $3) returning id`, pointID, i[2], true)
 		var inspectionLogID int
 		err = inspectionLogRow.Scan(&inspectionLogID)
 		if err != nil {
@@ -258,8 +258,8 @@ func fillInspection(db *sql.DB, inspections [][]string) {
 		}
 
 		_, err = connection.Exec(`insert into inspection_log_data values(default,
-			$1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-			inspectionLogID, i[3], i[4], i[5], i[6], i[7], i[8], i[9], i[10])
+			$1, $2, $3, $4, $5, $6, $7, $8)`,
+			inspectionLogID, i[3], i[4], i[5], i[6], i[7], i[8], i[9])
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
