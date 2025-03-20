@@ -18,6 +18,19 @@ conn2.autocommit = True
 
 
 def get_content(url, type_s, id, name, folder):
+    folder_path = folder + type_s + "/" + id
+    ref = "media/" + type_s + "/" + id
+    path = folder_path + "/" + name
+    href = ref + "/" + name
+    path_img = path + ".jpeg"
+    path_video = path + ".mov"
+    href_img = href + ".jpeg"
+    href_video = href + ".mov"
+    if Path(path_img).is_file():
+        return href_img
+    if Path(path_video).is_file():
+        return href_video
+
     with client:
         try:
             meta = client.get_public_meta(url)
@@ -28,30 +41,16 @@ def get_content(url, type_s, id, name, folder):
         except:
              return ""
 
-        folder_path = folder + type_s + "/" + id
-        ref = "media/" + type_s + "/" + id
-        path = folder_path + "/" + name
-        href = ref + "/" + name
         if anti == "clean":
             if type_file == 'file':
                 if not os.path.exists(folder_path):
                     os.mkdir(folder_path)
                 if media == "image":
-                    path += ".jpeg"
-                    href += ".jpeg"
-                    if Path(path).is_file():
-                        return href
-                    else:
-                        print(href)
-                        return href
+                    print("net")
+                    return href_img
                 elif media == "video":
-                    path += ".mov"
-                    href += ".mov"
-                    if Path(path).is_file():
-                        return href
-                    else:
-                        print(href)
-                        return href
+                    print("net")
+                    return href_video
                 else:
                     return ""
             else:
