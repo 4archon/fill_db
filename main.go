@@ -70,12 +70,12 @@ func fillPoints(db *sql.DB, points [][]string) {
 		var logRow *sql.Row
 		if i[3] == "" {
 			logRow = connection.QueryRow(`insert into change_points_log values(
-				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id`,
-				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], nil, nil, true)	
+				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id`,
+				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], nil, nil)	
 		} else {
 			logRow = connection.QueryRow(`insert into change_points_log values(
-				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning id`,
-				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], i[3], nil, true)
+				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id`,
+				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], i[3], nil)
 		}
 		var logID int
 		err = logRow.Scan(&logID)
@@ -85,8 +85,16 @@ func fillPoints(db *sql.DB, points [][]string) {
 			return
 		}
 
-		logActiveRow := connection.QueryRow(`insert into point_active_log(point_id, point_status, active)
-		values($1, $2, $3) returning id;`, pointID, active, true)
+		var logActiveRow *sql.Row
+		if i[3] == "" {
+			logActiveRow = connection.QueryRow(`insert into point_active_log(point_id,
+			point_status, active)
+			values($1, $2, $3) returning id;`, pointID, active, true)
+		} else {
+			logActiveRow = connection.QueryRow(`insert into point_active_log(point_id, point_status,
+			change_date, active)
+			values($1, $2, $3, $4) returning id;`, pointID, active, i[3], true)
+		}
 		var logActiveID int
 		err = logActiveRow.Scan(&logActiveID)
 		if err != nil {
@@ -95,9 +103,19 @@ func fillPoints(db *sql.DB, points [][]string) {
 			return
 		}
 
-		_, err = connection.Exec(`update report set change_point_id = $1, point_active_id = $2,
-		submission_date = $3, sent_worker = $4, verified = $5 where id = $6`, logID, logActiveID,
-		nil, true, false, reportID)
+		if i[3] == "" {
+			_, err = connection.Exec(`update report set change_point_id = $1, point_active_id = $2,
+			submission_date = $3, appointment_date = $4,
+			sent_worker = $5, verified = $6 where id = $7`, logID, logActiveID,
+			"2024-04-01 08:00:00", "2024-04-01 08:00:00",
+			true, false, reportID)
+		} else {
+			_, err = connection.Exec(`update report set change_point_id = $1, point_active_id = $2,
+			submission_date = $3, appointment_date = $4,
+			sent_worker = $5, verified = $6 where id = $7`, logID, logActiveID,
+			i[3], i[3],
+			true, false, reportID)
+		}
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
@@ -195,8 +213,11 @@ func fillService(db *sql.DB, service [][]string) {
 			return
 		}
 
-		_, err = connection.Exec(`update report set service_log_id = $1, submission_date = $2, 
-		sent_worker = $3, verified = $4 where id = $5`, serviceLogID, i[2], true, false, reportID)
+		_, err = connection.Exec(`update report set service_log_id = $1,
+		submission_date = $2, appointment_date = $3,
+		sent_worker = $4, verified = $5 where id = $6`, serviceLogID,
+		i[2], i[2],
+		true, false, reportID)
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
@@ -266,8 +287,11 @@ func fillInspection(db *sql.DB, inspections [][]string) {
 			return
 		}
 
-		_, err = connection.Exec(`update report set inspection_log_id = $1, submission_date = $2, 
-		sent_worker = $3, verified = $4 where id = $5`, inspectionLogID, i[2], true, false, reportID)
+		_, err = connection.Exec(`update report set inspection_log_id = $1,
+		submission_date = $2, appointment_date = $3,
+		sent_worker = $4, verified = $5 where id = $6`, inspectionLogID,
+		i[2], i[2],
+		true, false, reportID)
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
