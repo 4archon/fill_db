@@ -24,8 +24,8 @@ def get_content(url, type_s, id, name, folder):
     href = ref + "/" + name
     path_img = path + ".jpeg"
     path_video = path + ".mov"
-    href_img = href + ".jpeg"
-    href_video = href + ".mov"
+    href_img = "/" + href + ".jpeg"
+    href_video = "/" + href + ".mov"
     if Path(path_img).is_file():
         return href_img
     if Path(path_video).is_file():
