@@ -2,7 +2,6 @@
 
 import yadisk
 import psycopg2
-import os
 import datetime
 from pathlib import Path
 
@@ -17,75 +16,62 @@ cursor2 = conn2.cursor()
 conn2.autocommit = True
 
 
-def get_content(url, type_s, id, name, folder):
-    folder_path = folder + type_s + "/" + id
-    ref = "media/" + type_s + "/" + id
-    path = folder_path + "/" + name
-    href = ref + "/" + name
-    path_img = path + ".jpeg"
-    path_video = path + ".mov"
-    href_img = "/" + href + ".jpeg"
-    href_video = "/" + href + ".mov"
-    if Path(path_img).is_file():
-        return href_img
-    if Path(path_video).is_file():
-        return href_video
+def get_content(id, url, media_type):
+    path_file = folder + id + "." + media_type
+    if Path(path_file).is_file():
+        return True
 
     with client:
         try:
             meta = client.get_public_meta(url)
             anti = meta["antivirus_status"]
             type_file = meta["type"]
-            media = meta["media_type"]
             down_link = client.get_public_download_link(url)
         except:
-             return ""
+             return False
 
         if anti == "clean":
             if type_file == 'file':
-                if not os.path.exists(folder_path):
-                    os.mkdir(folder_path)
-                if media == "image":
-                    client.download_by_link(down_link, path_img)
-                    return href_img
-                elif media == "video":
-                    client.download_by_link(down_link, path_video)
-                    return href_video
-                else:
-                    return ""
+                client.download_by_link(down_link, path_file)
+                return True
             else:
-                return ""
+                return False
         else:
-            return ""
+            return False
 
 
-def fill_service():
-    type_s = "service"
-    cursor.execute("select id, photo_before, photo_left, photo_right, photo_front, video, photo_extra from service_log_data order by id")
+def get_name(name):
+    if name == "b":
+        return "Фото до"
+    elif name == "l":
+        return "Фото слева"
+    elif name == "r":
+        return "Фото справа"
+    elif name == "f":
+        return "Фото спереди"
+    elif name == "e":
+        return "Дополнительное фото"
+    elif name == "v":
+        return "Видео"
+    else:
+        return ""
+
+
+def fill_photo():
+    cursor.execute("select id, media_name, media_type from media order by id")
     for log in cursor.fetchall():
         id = str(log[0])
-        photo_before = get_content(log[1], type_s, id, "photo_before", folder)
-        photo_left = get_content(log[2], type_s, id, "photo_left", folder)
-        photo_right = get_content(log[3], type_s, id, "photo_right", folder)
-        photo_front = get_content(log[4], type_s, id, "photo_front", folder)
-        photo_extra = get_content(log[6], type_s, id, "photo_extra", folder)
-        video = get_content(log[5], type_s, id, "video", folder)
-        cursor2.execute("update service_log_data set photo_before = %s, photo_left = %s, photo_right = %s, photo_front = %s, photo_extra = %s, video = %s where id = %s",
-        (photo_before, photo_left, photo_right, photo_front, photo_extra, video, id))
-        print(id + type_s, flush=True)
-        
-def fill_inspection():
-    type_s = "inspection"
-    cursor.execute("select id, photo_left, photo_right, photo_front, video from inspection_log_data order by id")
-    for log in cursor.fetchall():
-        id = str(log[0])
-        photo_left = get_content(log[1], type_s, id, "photo_left", folder)
-        photo_right = get_content(log[2], type_s, id, "photo_right", folder)
-        photo_front = get_content(log[3], type_s, id, "photo_front", folder)
-        video = get_content(log[4], type_s, id, "video", folder)
-        cursor2.execute("update inspection_log_data set photo_left = %s, photo_right = %s, photo_front = %s, video = %s where id = %s",
-        (photo_left, photo_right, photo_front, video, id))
-        print(id + type_s, flush=True)        
+        name = str(log[1])
+        name_target = get_name(name[0])
+        name = name[1:]
+        media_type = str(log[2])
+        photo_exists = get_content(id, name, media_type)
+        if photo_exists:
+            cursor2.execute("update media set media_name = %s where id = %s", (name_target, id))
+        else:
+            cursor2.execute("delete from media where id = %s", (id))
+        print(id, flush=True)
+       
 
 folder = "../gis-api/server/static/media/"
 
@@ -93,8 +79,7 @@ folder = "../gis-api/server/static/media/"
 start = datetime.datetime.now()
 print(start)
 
-fill_service()
-fill_inspection()
+fill_photo()
 
 end = datetime.datetime.now()
 print(end)
