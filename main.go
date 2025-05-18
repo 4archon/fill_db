@@ -48,40 +48,22 @@ func fillPoints(db *sql.DB, points [][]string) {
 	for _, i := range points {
 		pointID := i[0]
 		active := codeActive(i[1])
-		_, err = connection.Exec("insert into points(id, active) values($1, $2)",
-			pointID, active)
-		if err != nil {
-			connection.Rollback()
-			log.Println(err)
-			return
-		}
-
-		var logRow *sql.Row
 		if i[3] == "" {
-			logRow = connection.QueryRow(`insert into points_log values(
-				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id`,
-				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], nil, nil)	
+			_, err = connection.Exec(`insert into points values($1, $2, 
+			$3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+			pointID, active, 
+			i[8], i[7], i[2], i[6], i[4], i[5], i[9], nil, nil)
 		} else {
-			logRow = connection.QueryRow(`insert into points_log values(
-				default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id`,
-				pointID, i[8], i[7], i[2], i[6], i[4], i[5], i[9], i[3], nil)
+			_, err = connection.Exec(`insert into points values($1, $2, 
+			$3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+			pointID, active, 
+			i[8], i[7], i[2], i[6], i[4], i[5], i[9], i[3], nil)
 		}
-		var logID int
-		err = logRow.Scan(&logID)
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
 			return
 		}
-
-		_, err = connection.Exec("update points set change_id = $1 where id = $2",
-			logID, pointID)
-		if err != nil {
-			connection.Rollback()
-			log.Println(err)
-			return
-		}
-		
 	}
 	err = connection.Commit()
 	if err != nil {
@@ -324,8 +306,8 @@ func fillService(db *sql.DB, service [][]string) {
 			return
 		}
 
-		_, err = connection.Exec(`update service set status = $1 where id = $2`,
-		status, serviceID)
+		_, err = connection.Exec(`update service set status = $1, sent = $2 where id = $3`,
+		status, true, serviceID)
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
