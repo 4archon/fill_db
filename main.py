@@ -70,7 +70,7 @@ def fill_photo():
         if photo_exists:
             cursor2.execute("update media set media_name = %s where id = %s", (name_target, id))
         else:
-            cursor2.execute("delete from media where id = %s", (id))
+            cursor2.execute("delete from media where id = %s", (id,))
         print(id, flush=True)
        
 
