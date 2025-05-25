@@ -325,22 +325,22 @@ func fillService(db *sql.DB, service [][]string) {
 		}
 
 		if i[6] != "" {
-			createMedia(workID, "jpeg", "b" + i[6], connection)
+			createMedia(serviceID, "jpeg", "b" + i[6], connection)
 		}
 		if i[7] != "" {
-			createMedia(workID, "jpeg", "l" + i[7], connection)
+			createMedia(serviceID, "jpeg", "l" + i[7], connection)
 		}
 		if i[8] != "" {
-			createMedia(workID, "jpeg", "r" + i[8], connection)
+			createMedia(serviceID, "jpeg", "r" + i[8], connection)
 		}
 		if i[9] != "" {
-			createMedia(workID, "jpeg", "f" + i[9], connection)
+			createMedia(serviceID, "jpeg", "f" + i[9], connection)
 		}
 		if i[12] != "" {
-			createMedia(workID, "jpeg", "e" + i[12], connection)
+			createMedia(serviceID, "jpeg", "e" + i[12], connection)
 		}
 		if i[10] != "" {
-			createMedia(workID, "mov", "v" + i[10], connection)
+			createMedia(serviceID, "mov", "v" + i[10], connection)
 		}
 	}
 
@@ -352,7 +352,7 @@ func fillService(db *sql.DB, service [][]string) {
 }
 
 func createMedia(workID int, mediaType string, name string, connection *sql.Tx) {
-	_, err := connection.Exec(`insert into media(work_id, media_type, media_name)
+	_, err := connection.Exec(`insert into media(service_id, media_type, media_name)
 	values($1, $2, $3)`, workID, mediaType, name)
 	if err != nil {
 		connection.Rollback()

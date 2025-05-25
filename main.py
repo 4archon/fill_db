@@ -65,6 +65,7 @@ def fill_photo():
         name_target = get_name(name[0])
         if name_target != "":
             name = name[1:]
+            name_target = name
         media_type = str(log[2])
         photo_exists = get_content(id, name, media_type)
         if photo_exists:
