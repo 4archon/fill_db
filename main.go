@@ -96,7 +96,7 @@ func fillMarking(db *sql.DB, points [][]string) {
 		}
 
 		_, err = connection.Exec(`insert into markings values(default,
-		$1, $2, $3)`, pointID, i[5], "Термопластик")
+		$1, $2, $3, $4)`, pointID, i[5], "Термопластик", true)
 		
 		if err != nil {
 			connection.Rollback()
