@@ -207,7 +207,7 @@ func fillService(db *sql.DB, service [][]string) {
 				case "Демонтаж временный":
 					work = "Демонтаж"
 					task_type = "Временный демонтаж по разным причинам"
-					status = "Временно демонтирована"
+					status = "Временно сняты дуги"
 				case "Демонтаж НЕ временный":
 					work = "Демонтаж"
 					task_type = "Снятие всех дуг"
@@ -252,7 +252,7 @@ func fillService(db *sql.DB, service [][]string) {
 					work = "Работа не требуется"
 				case "Идет благоустройство":
 					work = "Работа не требуется"
-					status = "Идет блогоустройство"
+					status = "Идет благоустройство"
 				}
 			} else if i[3] == "Ремонт" {
 				switch i[4] {
