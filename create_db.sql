@@ -49,6 +49,7 @@ create table points_log (
     carpet          varchar(30),
     change_date     timestamp,
     comment         varchar(500),
+    status          varchar(100),
     owner           varchar(100),
     operator        varchar(100),
     external_id     varchar(100)
@@ -103,3 +104,16 @@ create table tasks (
     deadline        timestamp,
     done            boolean
 );
+
+create function point_data_log() returns trigger as $$
+begin
+    insert into points_log values(default, old.id, old.active, old.long, old.lat,
+    old.address, old.district, old.number_arc, old.arc_type, old.carpet,
+    old.change_date, old.comment, old.status, old.owner, old.operator, old.external_id);
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger point_data_log
+after update on points
+for each row execute procedure point_data_log();
