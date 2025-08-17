@@ -85,7 +85,7 @@ func fillMarking(db *sql.DB, points [][]string) {
 		$10,
 		$11, $12, $13, $14, $15)`,
 		pointID, active,
-		i[10], i[9], i[2], i[7], i[4], i[6], i[8],
+		i[10], i[9], i[2], i[7], i[4], "Разметка", i[8],
 		func(s *string) *string {if *s == "" {return nil} else {return s}}(&i[3]),
 		nil, nil, i[12], i[13], i[0])
 		
