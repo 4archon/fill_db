@@ -277,8 +277,10 @@ func fillService(db *sql.DB, service [][]string) {
 			return
 		}
 
-		_, err = connection.Exec(`insert into tasks(point_id, type, service_id, entry_date, done)
-				values($1, $2, $3, $4, $5)`, pointID, task_type, serviceID, i[2], true)
+		_, err = connection.Exec(`insert into tasks(point_id, type, service_id,
+				customer, entry_date, done)
+				values($1, $2, $3, $4, $5, $6)`, pointID, task_type, serviceID,
+				"Ultradop",  i[2], true)
 		if err != nil {
 			connection.Rollback()
 			log.Println(err)
@@ -345,64 +347,64 @@ func addTaskAfterInspection(service_type string, subtype string, connection *sql
 	if service_type == "Точка требует ремонта" {
 		switch subtype {
 		case "частичное нанесение":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Частичное нанесение", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Частичное нанесение", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
 				return
 			}
 		case "Покраска":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Произвести сервис", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Произвести сервис", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
 				return
 			}
 		case "Монтаж старой точки":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Монтаж старой точки", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Монтаж старой точки", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
 				return
 			}
 		case "Замена на алюминиевую дугу":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Замена дуги на алюминиевую", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Замена дуги на алюминиевую", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
 				return
 			}
 		case "Забрать дуги срочно":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Благоустройство - Временный демонтаж", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Благоустройство - Временный демонтаж", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
 				return
 			}
 		case "Демонтаж-монтаж + Покраска":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Произвести сервис", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Произвести сервис", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
 				return
 			}
 		case "Демонтаж-монтаж":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Произвести сервис", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Произвести сервис", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
 				return
 			}
 		case "Временный демонтаж":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Временный демонтаж по разным причинам", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Временный демонтаж по разным причинам", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
@@ -412,8 +414,8 @@ func addTaskAfterInspection(service_type string, subtype string, connection *sql
 	} else if service_type == "Ремонт" {
 		switch subtype {
 		case "Монтаж старой точки":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Монтаж старой точки", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Монтаж старой точки", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
@@ -423,8 +425,8 @@ func addTaskAfterInspection(service_type string, subtype string, connection *sql
 	} else if service_type == "Установка новой точки" {
 		switch subtype {
 		case "Монтаж новой точки":
-			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date)
-					values($1, $2, $3)`, pointID, "Монтаж новой точки", entry_date)
+			_, err := connection.Exec(`insert into tasks(point_id, type, entry_date, customer)
+					values($1, $2, $3, $4)`, pointID, "Монтаж новой точки", entry_date, "Ultradop")
 			if err != nil {
 				connection.Rollback()
 				log.Println(err)
